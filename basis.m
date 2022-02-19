@@ -3,7 +3,7 @@ function [] = basis
 %version 1: current situation, to compare with
 %version 2: Lindo result
 v=2;
-plot=1;
+plot=0;
 
 lindoRes = transformLindoData('lindoResults.txt');
 %HIER KOLOMMEN MET LINDO resultaten kopiëren (via excel?):
