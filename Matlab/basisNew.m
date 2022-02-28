@@ -35,8 +35,8 @@ MAaHe=12;
 
 %late arrival, on average, during peak hours, 1/lambda
 %late arrival counts in two ways
-MHeAaav=2.14;
-MAaLEav=2.86;
+MHeAaav=2.31;
+MAaLEav=2.69;
 Cav=1.62;
 Kav=1.38;
 ELeAaav=1.30;
