@@ -1,0 +1,126 @@
+min totcost
+
+s.t.
+
+!################
+!MINIMUM TRANSFER TIMES
+TTMIN = 3
+
+!##################
+!IDEAL BUFFER TIMES
+!STILL TO CALCULATE!
+
+!Hasselt
+IBK1E0=
+IBE0K1=
+IBK1E1=
+IBE0K0=
+
+!Leuven
+IBC1E0=
+IBC1M0=
+IBM1C0=
+IBE1C0=
+
+!Aarschot
+IBM1E0=
+IBE1M0=
+
+!Landen
+IBC0K1=
+IBK0C1=
+
+!##############
+!DIFFERENT LINES          
+! note Arriving = Departure station before + travelling time between station + stopping time end station
+
+!C11 (Landen to Leuven [Brussels](tranfer possibility in Leuven))
+DC11La < 60
+DC11La + BC1LaLe - AC11Le = -27 	!IRCLaLe = 27 ideal running times, IR train
+STC1Le > 1				!stopping time because through
+
+!C10 (Leuven Landen)
+DC10Le < 60
+DC10Le + BC0LeLa - AC10La = -27
+STC0La > 1				!stopping time because reused
+
+!E11 (Hasselt Leuven [Genk Brussel] (transfer possibility in Aarschot and Leuven))
+DE11Ha<60
+DE11Ha+STE1Aa +BE1HaAa -DE11Aa=-25	!ICEAaHa= 25
+DE11Aa+BE1AaLe -AE11Le=-12		!ICELeAa= 12; ideal running times, IC train
+STE1Aa >1
+STE1Le > 1 				!stopping time because through 
+
+!E10 (Leuven Hasselt)
+DE10Le<60
+DE10Le+STE0Aa + BE0LeAa -DE10Aa= -12	!ICELeAa= 12; ideal running times, IC train
+DE10Aa+ BE0AaHa - AE10Ha=-25		!ICEAaHa= 25
+STE0Aa >1 
+STE0Ha > 1 				!stopping time because through
+
+
+!K10 (Hasselt Landen [Liège Landen] (transfer in Landen))
+DK10Ha<60
+DK10Ha+STK0Al -DK10Al=-6		!ICKHaAl=6
+DK10Al+STK0St -DK10St=-8		!ICKAlSt=8
+DK10St +BK0StLa -AK0La=-9 		!ICKStLa=9
+STK0Al>1
+STK0St>1
+STK0La > 1				!stopping time because train reused
+
+
+!K11 (Landen Hasselt)
+DK11La<60
+DK11La+STK1St -DK11St=-9
+DK11St+STK1Al -DK11Al=-8
+DK11Al+BK1AlHa -AK11Ha=-6
+STK1Al>1
+STK1St>1
+STK1Ha > 1				!stopping time because through
+
+!M10 (Leuven Heist[Brussel Heist] (transfer in Aarschot)
+DM10Le<60
+DM10Le+STM0Aa + BM0LeAa -DM10Aa=-14	!LMLeAa=14; ideal running times, L train
+DM10Aa-AM10He=-12			!LMAaHe=12
+STM0Aa>1
+STM0Le>1				!stopping time because through
+
+!M11 (Heist Leuven)
+DM11He<60
+DM11He+STM1Aa + BM1HeAa -DM11Aa=-12
+DM11Aa+BM1AaLe -AM11Le=-14
+STM1Aa>1
+STM1He>1				!stopping time becasue through
+
+!#############
+!EQUAL TRAINS
+
+!C train in Landen
+AC10La + STC0La - DC21La < 0 		!C10 is the same train as the C21 train
+
+!K train in Landen
+AK10La + STK0La - DK21La < 0 		!K10 same train as the K12
+
+!#############
+!TRANSFERS
+!WE NEED TO SPECIFY THE 12 TRANSFERS HERE AND DECIDE WHERE THE FIRST TRAIN IS AND WHERE A SECOND
+
+
+!############
+!SINGLE TRACK SEPCIFICATION 
+
+
+!############
+!BUFFER/IDEAL BUFFER COMPARISON
+
+
+!############
+!CALCULATE THE TRANSFERCOST (TTCOST) STOPPINGCOST (STCOST) AND THE DEVIATION COST (DEVIAT) AND SO THE TOTALCOST
+!ALL THESE WEIGHTS USED NEED TO BE CALCULATED AGAIN FOR ALL OUR VARIABLES 
+
+!############
+!GUARANTEE PERIODICITY OF ALL THE DEPARTURES AND ARRIVALS
+
+
+!############
+!SPECIFY THE INTEGER VARIABLES (SO ALL VARIABLES OF THE TIME TABLES ARE INTEGERS)
