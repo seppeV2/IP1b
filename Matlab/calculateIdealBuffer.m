@@ -1,4 +1,4 @@
-function [idealBufferRound, idealBuffer] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,plot)
+function [idealBufferRound, idealBuffer,n,p] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,plot)
 
 syms B real
 
@@ -10,10 +10,6 @@ fplot(C, [0,16]); %plot of the cost function
 end
 
 C2 = diff(C , B); %first derivative
-
-if plot
-fplot(C2, [0,16]); %plot of the first derivate
-end
 res = solve(C2 == 0, B, 'maxDegree' , 5); %calculating the minimum
 idealBuffer = double(vpa(res, 6)); %numeric value 4 significant numbers 
 idealBufferRound = round(idealBuffer); %round the value
@@ -24,5 +20,19 @@ xline(idealBuffer); %plot idealBuffer x line
 txt = sprintf('  <- IdealBuffer %0.4f', idealBuffer );
 text(idealBuffer,subs(C,idealBuffer), txt, 'FontSize' , 14);
 end
+
+disp('ideal buffer');
+disp(idealBuffer);
+disp('round ideal buffer');
+disp(idealBufferRound);
+disp('y value ideal buffer');
+disp(vpa(subs(C,idealBuffer),6));
+disp('y value 0');
+disp(vpa(subs(C,0),6));
+
+n=vpa((subs(C,0) - subs(C,idealBuffer))/(idealBuffer*10000), 6);
+p=vpa((subs(C,10) - subs(C,idealBuffer))/((30-idealBuffer)*10000),6);
+
+
 end
 
