@@ -5,14 +5,20 @@ Pr=8422;
 Pa=14992;
 p=60;
 lambda=1.38;
-idealBuffers.IBK1E0 = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,0);
+[idealBufferRound, ~, nCoef, pCoef] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,0);
+idealBuffers.IBK1E0.IdealBuffer = idealBufferRound;
+idealBuffers.IBK1E0.nCoef = nCoef;
+idealBuffers.IBK1E0.pCoef = pCoef;
 % IBE0K1
 Pt=1745;
 Pr=0;
 Pa=22515;
 p=60;
 lambda=5;
-idealBuffers.IBE0K1 = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,0);
+[idealBufferRound, ~ , nCoef, pCoef] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,0);
+idealBuffers.IBE0K1.IdealBuffer = idealBufferRound;
+idealBuffers.IBE0K1.nCoef = nCoef;
+idealBuffers.IBE0K1.pCoef = pCoef;
 % IBK1E1
 Pt=121;
 Pr=8422;

@@ -1,4 +1,4 @@
-function [idealBufferRound, idealBuffer,n,p] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,plot)
+function [idealBufferRound, idealBuffer, nCoef, pCoef, C] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,plot)
 
 syms B real
 
@@ -30,9 +30,8 @@ disp(vpa(subs(C,idealBuffer),6));
 disp('y value 0');
 disp(vpa(subs(C,0),6));
 
-n=vpa((subs(C,0) - subs(C,idealBuffer))/(idealBuffer*10000), 6);
-p=vpa((subs(C,10) - subs(C,idealBuffer))/((30-idealBuffer)*10000),6);
-
+nCoef=double((subs(C,0) - subs(C,idealBuffer))/(idealBuffer*10000));
+pCoef=double((subs(C,2*idealBuffer) - subs(C,idealBuffer))/((2*idealBuffer-idealBuffer)*10000));
 
 end
 
