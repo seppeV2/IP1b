@@ -5,6 +5,7 @@ s.t.
 !################
 !MINIMUM TRANSFER TIMES
 TTMIN = 3
+
 TTK11E10 - TTMIN > 0
 TTE10K11 - TTMIN > 0
 TTK11E21 - TTMIN > 0
@@ -27,9 +28,9 @@ TTM11E10 - TTMIN > 0
 
 !Hasselt
 IBK1E0=4
-IBE0K1=10 !manually reduced (was 17)
+IBE0K1=7 !manually reduced (was 17)
 IBK1E1=2
-IBE0K0=10 !manually reduced (was 28)
+IBE0K0=7 !manually reduced (was 28)
 
 !Leuven
 IBC1E0=1
@@ -157,10 +158,10 @@ AK10La - DC21La - TTK10C21 = 0
 
 !AARSCHOT
 !E1M0
-DE11Ha + 25 - DM10Aa - TTE11M10 = 0	!AE11Aa = DE11Ha + 25 (travelling time)
+DE11Ha  - DM10Aa - TTE11M10 = -25	!AE11Aa = DE11Ha + 25 (travelling time)
 
 !M1E0
-DM11He + 12 - DE10Aa - TTM11E10 = 0 	!AM11Aa = DM11He + 12 (travelling time)
+DM11He  - DE10Aa - TTM11E10 = -12 	!AM11Aa = DM11He + 12 (travelling time)
 
 
 !############
@@ -212,7 +213,7 @@ IBM1C0 + UM1C0p + UM1C0n - BM1AaLe = 0
 IBE1C0 + UE1C0p + UE1C0n - BE1AaLe = 0
 
 !Aarschot
-IBM1E0 + UM1E0p + UM1E0n - BM1HeAa = 0
+IBM1E0 + UE1C0p + UM1E0n - BM1HeAa = 0
 IBE1M0 + UE1M0p + UE1M0n - BE1HaAa = 0
 
 !Landen
@@ -232,7 +233,10 @@ IBK0C1 + UK0C1p + UK0C1n - BK0StLa = 0
 + 0.62*STK0St + 0*STK0La + 1.19*STK1Al + 0.62*STK1St + 1.26*STK1Ha + 0.45*STM0Aa 
 + 1.82*STM0Le + 0.45*STM1Aa + 0*STM1He - ,STCOST = 0
 
-DEVIAT = 0
+12.19*UK1E0p + 1.54*UK1E0n + 3*UE0K1p + 3*UE0K1n + 0.94*UK1E1n + 1.30*UK1E1p +  3*UE0K0n + 3*UE0K0p
++ 4.50*UC1E0n + 1.68*UC1E0p + 4.57*UC1M0n + 2.59*UC1M0p + 0.70*UM1C0n + 1.05*UM1C0p + 1.48*UE1C0n + 1.00*UE1C0p 
++ 0.38*UE1C0n + 1.66*UE1C0p + 2.27*UE1M0n + 4.17*UE1M0p + 0.67*UC0K1n + 5.56*UC0K1p + 0.70*UK0C1n + 8.73*UK0C1p 
+-DEVIAT = 0 
 
 TTCOST + STCOST + DEVIAT - TOTCOST = 0
 
@@ -326,7 +330,6 @@ DM20Le-DM10Le=60
 Gin STK1Al
 Gin STE1AA
 Gin STM1Aa
-Gin DC10He
 Gin DK10Al
 Gin AK11Ha
 Gin YAlSt
