@@ -437,7 +437,7 @@ for i=1:1:a
         uk10=0;
         mk10=0;
         pk10=0;
-        pzk10=(AK10La-ak10la)*THK10Le*WST;
+        pzk10=(AK10La-ak10la)*THK10La*WST;
     end
     
     %K11
