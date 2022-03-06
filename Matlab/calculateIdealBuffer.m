@@ -1,6 +1,5 @@
 function [idealBufferRound, idealBuffer, pCoef, nCoef, C] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,plot)
 
-clear all
 
 syms B real
 

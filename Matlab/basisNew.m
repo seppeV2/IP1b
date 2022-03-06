@@ -15,7 +15,7 @@ STE1LE = lindoRes.STE1LE;
 STM0AA = lindoRes.STM0AA;
 %STM0HE = lindoRes.STM0HE;
 STM1AA = lindoRes.STM1AA;
-STM1LE = lindoRes.STM1LE;
+%STM1LE = lindoRes.STM1LE;
 %stop K
 STK0AL = lindoRes.STK0AL;
 STK0ST = lindoRes.STK0ST;
@@ -69,17 +69,17 @@ WST= 1.5; 	%Waiting in a stopped train due to early arrival
 
 %number of arriving passengers in end stations
 %NEW END STATIONS LEUVEN,HASSELT, AARSCHOT AND LANDEN
-AE10Ha= 22515;
-AK11Ha= 8422;
-AK10La= 5109;
-AC10La= 53623;
-AE11Le= 7053.5;
-AM11Le= 5554.5;
-AC11Le= 14474;
-AM10Aa= 2000;
-AE10Aa= 14704;
-AM11Aa= 14992;
-AE11Aa= 4377;
+ARE10Ha= 22515;
+ARK11Ha= 8422;
+ARK10La= 5109;
+ARC10La= 53623;
+ARE11Le= 7053.5;
+ARM11Le= 5554.5;
+ARC11Le= 14474;
+ARM10Aa= 2000;
+ARE10Aa= 14704;
+ARM11Aa= 14992;
+ARE11Aa= 4377;
 
 %through passengers
 THK1St=	4109;
@@ -104,7 +104,7 @@ THE11Le=	26674.5;
 %NEW TRANSFERRING STATIONS LEUVEN,HASSELT, AARSCHOT AND LANDEN
 
 TK10C21= 4817;
-TC10K21= 4817;
+TC10K11= 4817;
 TE10K20= 119;
 TK11E21= 121;
 TE11M10= 980;
@@ -112,12 +112,12 @@ TM11E10= 980;
 TK11E10= 4227;
 TE10K11= 1745;
 TM11C20= 394;
-TC11M20= 533;
+TC11M10= 533;
 TE11C20= 149;
 TC11E20= 0;
 
-Total_number_transfer_pass = TK10C21+TC10K21+TE10K20+TK11E21+TE11M10+...
-    TM11E10+TK11E10+TE10K11+TM11C20+TC11M20+TE11C20+TC11E20;
+Total_number_transfer_pass = TK10C21+TC10K11+TE10K20+TK11E21+TE11M10+...
+    TM11E10+TK11E10+TE10K11+TM11C20+TC11M10+TE11C20+TC11E20;
 
 disp(Total_number_transfer_pass);
 %STOPPING TIMES
@@ -136,7 +136,7 @@ SE1Le = STE1LE - 1;
 SM0Aa = STM0AA - 1;
 %SM0He = STM0HE - 1;
 SM1Aa = STM1AA - 1;
-SM1Le = STM1LE - 1;
+SM1Le = 0; %no transfer so normal stopping time, stopping time = 1
 
 %K train
 SK0Al = STK0AL - 1;
@@ -163,6 +163,9 @@ DM31Aa=DM21Aa + 60;
 AM11Le=AM11LE;
 AM21Le=AM11Le + 60;
 AM31Le=AM21Le + 60;
+AM11Aa = DM11Aa - SM1Aa;
+AM21Aa = AM11Aa + 60;
+AM31Aa = AM21Aa + 60;
 
 AM10He=AM10HE;
 AM20He=AM10He + 60;
@@ -173,6 +176,9 @@ DM30Aa=DM20Aa + 60;
 DM10Le=DM10LE;
 DM20Le=DM10Le + 60;
 DM30Le=DM20Le + 60;
+AM10Aa = DM10Aa - SM0Aa;
+AM20Aa = AM10Aa + 60;
+AM30Aa = AM20Aa + 60;
 
 %E-train
 DE10Le=DE10LE;
@@ -184,9 +190,12 @@ DE30Aa=DE20Aa +60;
 AE10Ha=AE10HA;
 AE20Ha=AE10Ha +60;
 AE30Ha=AE20Ha +60;
-DE10Ha = AE10Ha + STE0HA;
+DE10Ha = AE10Ha + SE0Ha;
 DE20Ha = DE10Ha + 60;
 DE30Ha = DE20Ha + 60;
+AE10Aa = DE10Aa - SE0Aa;
+AE20Aa = AE10Aa + 60;
+AE30Aa = AE20Aa + 60;
 
 AE11Le=AE11LE;
 AE21Le=AE11Le +60;
@@ -197,7 +206,9 @@ DE31Aa=DE21Aa +60;
 DE11Ha=DE11HA;
 DE21Ha=DE11Ha +60;
 DE31Ha=DE21Ha +60;
-
+AE11Aa = DE11Aa - SE1Aa;
+AE21Aa = AE11Aa + 60;
+AE31Aa = AE21Aa + 60;
 
 
 %C-train
@@ -286,7 +297,7 @@ WA=20;
 
 
 missedK10C21 = 0;
-missedC10K21 = 0;
+missedC10K11 = 0;
 missedE10K20 = 0;
 missedK11E21 = 0;
 missedE11M10 = 0;
@@ -294,18 +305,30 @@ missedM11E10 = 0;
 missedK11E10 = 0;
 missedE10K11 = 0;
 missedM11C20 = 0;
-missedC11M20 = 0;
+missedC11M10 = 0;
 missedE11C20 = 0;
 missedC11E20 = 0;
+
+TCC10LA=0;
+TCC11LE=0;
+TCE10HA=0;
+TCE10AA=0;
+TCE11LE=0;
+TCE11AA=0;
+TCK11HA=0;
+TCK10LA=0;
+TCM11LE=0;
+TCM11AA=0;
+TCM10AA=0;
 
 
 for i=1:1:a
     %determine the real arriving times
     %these are compared later with the scheduled arrival times
     ac11le= DC11La+CLeLa + (round(-Cav*log(rand)));
-    ac10la = DC10Le + CLeLa + (round(-Cav*log(rand)));
+    ac10la = DC10Le + CLeLa  + (round(-Cav*log(rand)));
     
-    ae10ha= DE10Aa+EAaHa + (round(-EAaHaav*log(rand)));
+    ae10ha= DE10Aa+EAaHa +(round(-EAaHaav*log(rand)));
     ae10aa = DE10Le + ELeAa + (round(-ELeAaav*log(rand)));
     ae11le= DE11Aa+ELeAa + (round(-ELeAaav*log(rand)));
     ae11aa = DE11Ha + EAaHa + (round(-EAaHaav*log(rand)));
@@ -317,16 +340,16 @@ for i=1:1:a
     am11aa = DM11He + MAaHe + (round(-MHeAaav*log(rand)));
     
     am10aa = DM10Le + MLeAa + (round(-MAaLEav*log(rand)));
-    am10he = DM10Aa + MAaHe + (round(-MHeAaav*log(rand)));
+    %am10he = DM10Aa + MAaHe + (round(-MHeAaav*log(rand)));
     
     %arriving and through passengers
     %C10
     if ac10la>AC10La							%we have a delay
         mc10=(ac10la-AC10La);					%minutes of delay
-        pc10=mc10*AC10La*WLA;					%cost of this delay
+        pc10=mc10*ARC10La*WLA;					%cost of this delay
         pzc10=0;									%cost of arriving early
         if ac10la-AC10La>too_late
-            uc10= AC10La;	%number of passengers arriving late due to this delay
+            uc10= ARC10La;	%number of passengers arriving late due to this delay
         else
             uc10=0;
         end
@@ -335,15 +358,16 @@ for i=1:1:a
         mc10=0;
         pc10=0;
         pzc10=(AC10La-ac10la)*THC10La*WST;     %cost of arriving early
+        TCC10LA=TCC10LA + pzc10;
     end
     
     %C11
     if ac11le>AC11Le							%we have a delay
         mc11=(ac11le-AC11Le);					%minutes of delay
-        pc11=mc11*AC11Le*WLA;					%cost of this delay
+        pc11=mc11*ARC11Le*WLA;					%cost of this delay
         pzc11=0;									%cost of arriving early
         if ac11le-AC11Le>too_late
-            uc11= AC11Le;	%number of passengers arriving late due to this delay
+            uc11= ARC11Le;	%number of passengers arriving late due to this delay
         else
             uc11=0;
         end
@@ -352,15 +376,16 @@ for i=1:1:a
         mc11=0;
         pc11=0;
         pzc11=(AC11Le-ac11le)*THC11Le*WST;     %cost of arriving early
+        TCC11LE=TCC11LE + pzc11;
     end
     
     %E10Ha
     if ae10ha>AE10Ha							%we have a delay
         me10ha=(ae10ha-AE10Ha);					%minutes of delay
-        pe10ha=me10ha*AE10Ha*WLA;					%cost of this delay
+        pe10ha=me10ha*ARE10Ha*WLA;					%cost of this delay
         pze10ha=0;									%cost of arriving early
         if ae10ha-AE10Ha>too_late
-            ue10ha= AE10Ha;	%number of passengers arriving late due to this delay
+            ue10ha= ARE10Ha;	%number of passengers arriving late due to this delay
         else
             ue10ha=0;
         end
@@ -369,15 +394,16 @@ for i=1:1:a
         me10ha=0;
         pe10ha=0;
         pze10ha=(AE10Ha-ae10ha)*THE10Ha*WST;     %cost of arriving early
+        TCE10HA=TCE10HA+pze10ha;
     end
     
     %E10Aa
     if ae10aa>AE10Aa							%we have a delay
         me10aa=(ae10aa-AE10Aa);					%minutes of delay
-        pe10aa=me10aa*AE10Aa*WLA;					%cost of this delay
+        pe10aa=me10aa*ARE10Aa*WLA;					%cost of this delay
         pze10aa=0;									%cost of arriving early
         if ae10aa-AE10Aa>too_late
-            ue10aa= AE10Aa;	%number of passengers arriving late due to this delay
+            ue10aa= ARE10Aa;	%number of passengers arriving late due to this delay
         else
             ue10aa=0;
         end
@@ -386,16 +412,17 @@ for i=1:1:a
         me10aa=0;
         pe10aa=0;
         pze10aa=(AE10Aa-ae10aa)*THE10Aa*WST;     %cost of arriving early
+        TCE10AA=TCE10AA+pze10aa;
     end
     
     
     %E11Le
     if ae11le>AE11Le
         me11le=(ae11le-AE11Le);
-        pe11le=me11le*AE11Le*WLA;
+        pe11le=me11le*ARE11Le*WLA;
         pze11le=0;
         if ae11le-AE11Le>too_late
-            ue11le= AE11Le;
+            ue11le= ARE11Le;
         else
             ue11le=0;
         end
@@ -404,15 +431,16 @@ for i=1:1:a
         me11le=0;
         pe11le=0;
         pze11le=(AE11Le-ae11le)*THE11Le*WST;
+        TCE11LE=TCE11LE+pze11le;
     end
     
     %E11Aa
     if ae11aa>AE11Aa
         me11aa=(ae11aa-AE11Aa);
-        pe11aa=me11aa*AE11Aa*WLA;
+        pe11aa=me11aa*ARE11Aa*WLA;
         pze11aa=0;
         if ae11aa-AE11Aa>too_late
-            ue11aa= AE11Aa;
+            ue11aa= ARE11Aa;
         else
             ue11aa=0;
         end
@@ -421,15 +449,16 @@ for i=1:1:a
         me11aa=0;
         pe11aa=0;
         pze11aa=(AE11Aa-ae11aa)*THE11Aa*WST;
+        TCE11AA=TCE11AA + pze11aa;
     end
     
     %K10
     if ak10la>AK10La								%we have a delay
         mk10=(ak10la-AK10La);					%minutes of delay
-        pk10=mk10*AK10La*WLA;					%cost of this delay
+        pk10=mk10*ARK10La*WLA;					%cost of this delay
         pzk10=0;
         if ak10la-AK10La>too_late
-            uk10= AK10La;	%number of passengers arriving late due to this delay
+            uk10= ARK10La;	%number of passengers arriving late due to this delay
         else
             uk10=0;
         end
@@ -438,15 +467,18 @@ for i=1:1:a
         mk10=0;
         pk10=0;
         pzk10=(AK10La-ak10la)*THK10La*WST;
+        TCK10LA=TCK10LA + pzk10;
+        
+        
     end
     
     %K11
     if ak11ha>AK11Ha								%we have a delay
         mk11=(ak11ha-AK11Ha);					%minutes of delay
-        pk11=mk11*AK11Ha*WLA;					%cost of this delay
+        pk11=mk11*ARK11Ha*WLA;					%cost of this delay
         pzk11=0;
         if ak11ha-AK11Ha>too_late
-            uk11= AK11Ha;	%number of passengers arriving late due to this delay
+            uk11= ARK11Ha;	%number of passengers arriving late due to this delay
         else
             uk11=0;
         end
@@ -455,15 +487,16 @@ for i=1:1:a
         mk11=0;
         pk11=0;
         pzk11=(AK11Ha-ak11ha)*THK11Ha*WST;
+        TCK11HA=TCK11HA+pzk11;
     end
     
     %M11Le
     if am11le>AM11Le								%we have a delay
         mm11le=(am11le-AM11Le);					%minutes of delay
-        pm11le=mm11le*AM11Le*WLA;					%cost of this delay
+        pm11le=mm11le*ARM11Le*WLA;					%cost of this delay
         pzm11le=0;
         if am11le-AM11Le>too_late
-            um11le= AM11Le;	%number of passengers arriving late due to this delay
+            um11le= ARM11Le;	%number of passengers arriving late due to this delay
         else
             um11le=0;
         end
@@ -472,15 +505,16 @@ for i=1:1:a
         mm11le=0;
         pm11le=0;
         pzm11le=(AM11Le-am11le)*THM11Le*WST;
+        TCM11LE=TCM11LE + pzm11le;
     end
     
     %M11Aa
     if am11aa>AM11Aa								%we have a delay
         mm11aa=(am11aa-AM11Aa);					%minutes of delay
-        pm11aa=mm11aa*AM11Aa*WLA;					%cost of this delay
+        pm11aa=mm11aa*ARM11Aa*WLA;					%cost of this delay
         pzm11aa=0;
         if am11aa-AM11Aa>too_late
-            um11aa= AM11Aa;	%number of passengers arriving late due to this delay
+            um11aa= ARM11Aa;	%number of passengers arriving late due to this delay
         else
             um11aa=0;
         end
@@ -489,15 +523,16 @@ for i=1:1:a
         mm11aa=0;
         pm11aa=0;
         pzm11aa=(AM11Aa-am11aa)*THM11Aa*WST;
+        TCM11AA=TCM11AA+pzm11aa;
     end
     
     %M10Aa
     if am10aa>AM10Aa								%we have a delay
         mm10aa=(am10aa-AM10Aa);					%minutes of delay
-        pm10aa=mm10aa*AM10Aa*WLA;					%cost of this delay
+        pm10aa=mm10aa*ARM10Aa*WLA;					%cost of this delay
         pzm10aa=0;
         if am10aa-AM10Aa>too_late
-            um10aa= AM10Aa;	%number of passengers arriving late due to this delay
+            um10aa= ARM10Aa;	%number of passengers arriving late due to this delay
         else
             um10aa=0;
         end
@@ -506,36 +541,37 @@ for i=1:1:a
         mm10aa=0;
         pm10aa=0;
         pzm10aa=(AM10Aa-am10aa)*THM10Aa*WST;
+        TCM10AA=TCM10AA + pzm10aa;
     end
     
-    %M10He
-    if am10he>AM10He								%we have a delay
-        mm10he=(am10he-AM10He);					%minutes of delay
-        pm10he=mm10he*AM10He*WLA;					%cost of this delay
-        pzm10he=0;
-        if am10he-AM10He>too_late
-            um10he= AM10He;	%number of passengers arriving late due to this delay
-        else
-            um10he=0;
-        end
-    else
-        um10he=0;
-        mm10he=0;
-        pm10he=0;
-        pzm10he=(AM10He-am10he)*THM10He*WST;
-    end
+%     %M10He
+%     if am10he>AM10He								%we have a delay
+%         mm10he=(am10he-AM10He);					%minutes of delay
+%         pm10he=mm10he*ARM10He*WLA;					%cost of this delay
+%         pzm10he=0;
+%         if am10he-AM10He>too_late
+%             um10he= ARM10He;	%number of passengers arriving late due to this delay
+%         else
+%             um10he=0;
+%         end
+%     else
+%         um10he=0;
+%         mm10he=0;
+%         pm10he=0;
+%         pzm10he=(AM10He-am10he)*THM10He*WST;
+%     end
     
     
     
     
     passengers_arriving_late(i)=uc10+ue11le+uk11+uk10+um11le+uc11+ue10ha+...
-        ue10aa+ue11aa+um11aa+um10aa+um10he;
+        ue10aa+ue11aa+um11aa+um10aa; %+um10he;
     delay(i)=mc10+me11le+mk11+mk10+mm11le+mc11+me10ha+me10aa+me11aa+...
-        mm11aa+mm10aa+mm10he;
+        mm11aa+mm10aa;%+mm10he;
     cost_arriving_late(i)=pc10+pe11le+pk11+pk10+pm11le+pc11+pe10ha+pe10aa+...
-        pe11aa+pm11aa+pm10aa+pm10he;
+        pe11aa+pm11aa+pm10aa;%+pm10he;
     cost_through_passengers(i)=pzc10+pze11le+pzk11+pzk10+pzm11le+pzc11+...
-        pze10ha+pze10aa+pze11aa+pzm11aa+pzm10aa+pzm10he;
+        pze10ha+pze10aa+pze11aa+pzm11aa+pzm10aa;%+pzm10he;
     
     
     
@@ -551,7 +587,7 @@ for i=1:1:a
         pmk10c21 = TK10C21;
         plk10c21 = TK10C21;
     else
-        cmk10c21 = (DC21La-ak10la-TT)*TK10C21*WMT;
+        cmk10c21 = (DC21La-ak10la-TT)*TK10C21*WEA;
         pmk10c21 = 0;
         if ak10la+TT+WA<DC21La
             plk10c21 = TK10C21;
@@ -560,19 +596,19 @@ for i=1:1:a
         end
     end
     
-    %C10K21
-    if ac10la + TT> DK21La
-        missedC10K21 = missedC10K21 + 1;
-        cmc10k21 = (DK31La-ac10la-TT)*TC10K21*WMT;
-        pmc10k21 = TC10K21;
-        plc10k21 = TC10K21;
+    %C10K11
+    if ac10la + TT> DK11La
+        missedC10K11 = missedC10K11 + 1;
+        cmc10k11 = (DK31La-ac10la-TT)*TC10K11*WMT;
+        pmc10k11 = TC10K11;
+        plc10k11 = TC10K11;
     else
-        cmc10k21 = (DK21La-ac10la-TT)*TC10K21*WMT;
-        pmc10k21 = 0;
-        if ac10la+TT+WA<DK21La
-            plc10k21 = TC10K21;
+        cmc10k11 = (DK11La-ac10la-TT)*TC10K11*WEA;
+        pmc10k11 = 0;
+        if ac10la+TT+WA<DK11La
+            plc10k11 = TC10K11;
         else
-            plc10k21 = 0;
+            plc10k11 = 0;
         end
     end
     
@@ -583,7 +619,7 @@ for i=1:1:a
         pme10k20 = TE10K20;
         ple10k20 = TE10K20;
     else
-        cme10k20 = (DK20Ha-ae10ha-TT)*TE10K20*WMT;
+        cme10k20 = (DK20Ha-ae10ha-TT)*TE10K20*WEA;
         pme10k20 = 0;
         if ae10ha+TT+WA<DK20Ha
             ple10k20 = TE10K20;
@@ -599,7 +635,7 @@ for i=1:1:a
         pmk11e21 = TK11E21;
         plk11e21 = TK11E21;
     else
-        cmk11e21 = (DE21Ha-ak11ha-TT)*TK11E21*WMT;
+        cmk11e21 = (DE21Ha-ak11ha-TT)*TK11E21*WEA;
         pmk11e21 = 0;
         if ak11ha+TT+WA<DE21Ha
             plk11e21 = TK11E21;
@@ -615,7 +651,7 @@ for i=1:1:a
         pme11m10 = TE11M10;
         ple11m10 = TE11M10;
     else
-        cme11m10 = (DM10Aa-ae11aa-TT)*TE11M10*WMT;
+        cme11m10 = (DM10Aa-ae11aa-TT)*TE11M10*WEA;
         pme11m10 = 0;
         if ae11aa+TT+WA<DM10Aa
             ple11m10 = TE11M10;
@@ -630,7 +666,7 @@ for i=1:1:a
         pmm11e10 = TM11E10;
         plm11e10 = TM11E10;
     else
-        cmm11e10 = (DE10Aa-am11aa-TT)*TM11E10*WMT;
+        cmm11e10 = (DE10Aa-am11aa-TT)*TM11E10*WEA;
         pmm11e10 = 0;
         if am11aa+TT+WA<DE10Aa
             plm11e10 = TM11E10;
@@ -646,7 +682,7 @@ for i=1:1:a
         pmk11e10 = TK11E10;
         plk11e10 = TK11E10;
     else
-        cmk11e10 = (DE10Ha-ak11ha-TT)*TK11E10*WMT;
+        cmk11e10 = (DE10Ha-ak11ha-TT)*TK11E10*WEA;
         pmk11e10 = 0;
         if ak11ha+TT+WA<DE10Ha
             plk11e10 = TK11E10;
@@ -662,7 +698,7 @@ for i=1:1:a
         pme10k11 = TE10K11;
         ple10k11 = TE10K11;
     else
-        cme10k11 = (DK11Ha-ae10ha-TT)*TE10K11*WMT;
+        cme10k11 = (DK11Ha-ae10ha-TT)*TE10K11*WEA;
         pme10k11 = 0;
         if ae10ha+TT+WA<DK11Ha
             ple10k11 = TE10K11;
@@ -678,7 +714,7 @@ for i=1:1:a
         pmm11c20 = TM11C20;
         plm11c20 = TM11C20;
     else
-        cmm11c20 = (DC20Le-am11le-TT)*TM11C20*WMT;
+        cmm11c20 = (DC20Le-am11le-TT)*TM11C20*WEA;
         pmm11c20 = 0;
         if am11le+TT+WA<DC20Le
             plm11c20 = TM11C20;
@@ -694,7 +730,7 @@ for i=1:1:a
         pme11c20 = TE11C20;
         ple11c20 = TE11C20;
     else
-        cme11c20 = (DC20Le-ae11le-TT)*TE11C20*WMT;
+        cme11c20 = (DC20Le-ae11le-TT)*TE11C20*WEA;
         pme11c20 = 0;
         if ae11le+TT+WA<DC20Le
             ple11c20 = TE11C20;
@@ -703,33 +739,33 @@ for i=1:1:a
         end
     end
     
-    %C11M20	Landen	Aarschot
-    if ac11le + TT> DM20Le
-        missedC11M20 = missedC11M20 +1;
-        cmc11m20 = (DM30Le-ac11le-TT)*TC11M20*WMT;
-        pmc11m20 = TC11M20;
-        plc11m20 = TC11M20;
+    %C11M10	Landen	Aarschot
+    if ac11le + TT> DM10Le
+        missedC11M10 = missedC11M10 +1;
+        cmc11m10 = (DM30Le-ac11le-TT)*TC11M10*WMT;
+        pmc11m10 = TC11M10;
+        plc11m10 = TC11M10;
     else
-        cmc11m20 = (DM20Le-ac11le-TT)*TC11M20*WMT;
-        pmc11m20 = 0;
-        if ac11le+TT+WA<DM20Le
-            plc11m20 = TC11M20;
+        cmc11m10 = (DM10Le-ac11le-TT)*TC11M10*WEA;
+        pmc11m10 = 0;
+        if ac11le+TT+WA<DM10Le
+            plc11m10 = TC11M10;
         else
-            plc11m20 = 0;
+            plc11m10 = 0;
         end
     end
     
     
     
     
-    cost_of_transfers(i)= cmk10c21+cmc10k21+cme10k20+cmk11e21+...
-        cme11m10+cmm11e10+cmk11e10+cme10k11+cmm11c20+cme11c20+cmc11m20;
+    cost_of_transfers(i)= cmk10c21+cmc10k11+cme10k20+cmk11e21+...
+        cme11m10+cmm11e10+cmk11e10+cme10k11+cmm11c20+cme11c20+cmc11m10;
     
-    missed_transfers(i)=pmk10c21+pmc10k21+pme10k20+pmk11e21+...
-        pme11m10+pmm11e10+pmk11e10+pme10k11+pmm11c20+pme11c20+pmc11m20;
+    missed_transfers(i)=pmk10c21+pmc10k11+pme10k20+pmk11e21+...
+        pme11m10+pmm11e10+pmk11e10+pme10k11+pmm11c20+pme11c20+pmc11m10;
     
-    long_transfers(i)= plk10c21+plc10k21+ple10k20+plk11e21+...
-        ple11m10+plm11e10+plk11e10+ple10k11+plm11c20+ple11c20+plc11m20;
+    long_transfers(i)= plk10c21+plc10k11+ple10k20+plk11e21+...
+        ple11m10+plm11e10+plk11e10+ple10k11+plm11c20+ple11c20+plc11m10;
     
 end
 
@@ -753,7 +789,7 @@ if plot
     close all
     figure
     barplot = (1/a)*[missedK10C21
-        missedC10K21
+        missedC10K11
         missedE10K20
         missedK11E21
         missedE11M10
@@ -761,13 +797,13 @@ if plot
         missedK11E10
         missedE10K11
         missedM11C20
-        missedC11M20
+        missedC11M10
         missedE11C20
         missedC11E20];
     
     names = {
         'K10C21'
-        'C10K21'
+        'C10K11'
         'E10K20'
         'K11E21'
         'E11M10'
@@ -775,7 +811,7 @@ if plot
         'K11E10'
         'E10K11'
         'M11C20'
-        'C11M20'
+        'C11M10'
         'E11C20'
         'C11E20'};
     
@@ -785,7 +821,7 @@ if plot
     
     figure
     barplot2 = (1/a)*[missedK10C21*TK10C21
-        missedC10K21*TC10K21
+        missedC10K11*TC10K11
         missedE10K20*TE10K20
         missedK11E21*TK11E21
         missedE11M10*TE11M10
@@ -793,12 +829,41 @@ if plot
         missedK11E10*TK11E10
         missedE10K11*TE10K11
         missedM11C20*TM11C20
-        missedC11M20*TC11M20
+        missedC11M10*TC11M10
         missedE11C20*TE11C20
         missedC11E20*TC11E20];
     bar(barplot2);
     set(gca,'xticklabel',names);
-    title('Percentage missed passengers');
+    title('missed passengers');
+    
+    figure
+    barplot3 = (1/a)*[TCC10LA
+        TCC11LE
+        TCE10HA
+        TCE10AA
+        TCE11LE
+        TCE11AA
+        TCK11HA
+        TCK10LA
+        TCM11LE
+        TCM11AA
+        TCM10AA];
+    
+    names2 = {'C10LA'
+        'C11LE'
+        'E10HA'
+        'E10AA'
+        'E11LE'
+        'E11AA'
+        'K11HA'
+        'K10LA'
+        'M11LE'
+        'M11AA'
+        'M10AA'};
+     bar(barplot3);
+    set(gca,'xticklabel',names2);
+    title('Through Costs Per Train');
+    
 end
 end
 

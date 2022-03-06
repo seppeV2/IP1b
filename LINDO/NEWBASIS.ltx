@@ -6,20 +6,24 @@ s.t.
 !MINIMUM TRANSFER TIMES
 TTMIN = 3
 
+
+
 TTK11E10 - TTMIN > 0
-TTE10K11 - TTMIN > 0
+TTE10K11 - TTMIN > 5
 TTK11E21 - TTMIN > 0
 TTE10K20 - TTMIN > 0
 
 TTE11C20 - TTMIN > 0
-TTC11M20 - TTMIN > 0
+TTC11M10 - TTMIN > 2
 TTM11C20 - TTMIN > 0
 
-TTC10K21 - TTMIN > 0
-TTK10C21 - TTMIN > 0
+TTC10K11 - TTMIN > 0
+TTK10C21 - TTMIN > 3
 
-TTE11M10 - TTMIN > 0
+TTE11M10 - TTMIN > 4
 TTM11E10 - TTMIN > 0
+
+
 
 
 !##################
@@ -48,6 +52,7 @@ IBK0C1=5
 
 
 
+
 !##############
 !DIFFERENT LINES          
 ! note Arriving = Departure station before + travelling time between station + stopping time end station
@@ -73,8 +78,8 @@ STE1Le > 1 				!stopping time because through
 DE10Le<60
 DE10Le+STE0Aa + BE0LeAa -DE10Aa= -12	!ICELeAa= 12; ideal running times, IC train
 DE10Aa+ BE0AaHa - AE10Ha=-25		!ICEAaHa= 25
-STE0Aa >1 
-STE0Ha > 1 				!stopping time because through
+STE0Aa > 1 
+STE0Ha > 1				!stopping time because through
 
 
 !K10 (Hasselt Landen [Liège Landen] (transfer in Landen))
@@ -94,7 +99,7 @@ DK11St+STK1Al -DK11Al=-8
 DK11Al+BK1AlHa -AK11Ha=-6
 STK1Al>1
 STK1St>1
-STK1Ha > 1				!stopping time because through
+STK1Ha > 4				!stopping time because through
 
 !M10 (Leuven Heist[Brussel Heist] (transfer in Aarschot)
 DM10Le<60
@@ -119,6 +124,8 @@ AC10La + STC0La - DC21La < 0 		!C10 is the same train as the C21 train
 !K train in Landen
 AK10La + STK0La - DK21La < 0 		!K10 same train as the K12
 
+
+
 !#############
 !TRANSFERS
 !Choice of first or second train done by the rule of papers
@@ -131,44 +138,45 @@ AK11Ha + STK1Ha - AE10Ha - TTK11E10 = 0 !Both feasible when the two trains arriv
 AE10Ha + STE0Ha - AK11Ha - TTE10K11 = 0 !And the Stopping time is equal to both (equal) tranferring times
 
 !K1E1
-AK11Ha - DE21Ha - TTK11E21 = 0
+-AK11Ha + DE21Ha - TTK11E21 = 0
 
 !E0K0
-AE10Ha - DK20Ha - TTE10K20 = 0
+-AE10Ha + DK20Ha - TTE10K20 = 0
 
 !LEUVEN
 !E1C0
-AE11Le - DC20Le - TTE11C20 = 0
+-AE11Le + DC20Le - TTE11C20 = 0
 
 !C1M0
-AC11Le - DM10Le - TTC11M20 = 0 		!not following the rule but I want to try this 
+-AC11Le + DM10Le - TTC11M10 = 0 		!not following the rule but I want to try this 
 
 !M1C0
-AM11Le - DC20Le - TTM11C20 = 0 		!this could mean E11 and M11 arrives at the same time (not ideal)
+-AM11Le + DC20Le - TTM11C20 = 0 		!this could mean E11 and M11 arrives at the same time (not ideal)
 
 !C1E0
 !Try to exclude this transfer 
 
 !LANDEN
 !C0K1
-AC10La - DK11La - TTC10K11 = 0
+-AC10La + DK11La - TTC10K11 = 0		! not following the rules
 
 !K0C1
-AK10La - DC21La - TTK10C21 = 0
+-AK10La + DC21La - TTK10C21 = 0
 
 !AARSCHOT
 !E1M0
-DE11Ha  - DM10Aa - TTE11M10 = -25	!AE11Aa = DE11Ha + 25 (travelling time)
+-DE11Ha -BE1HaAa + DM10Aa - TTE11M10 = 25	!AE11Aa = DE11Ha + 25 + buffer (travelling time)
+
 
 !M1E0
-DM11He  - DE10Aa - TTM11E10 = -12 	!AM11Aa = DM11He + 12 (travelling time)
+-DM11He  -BM1HeAa + DE10Aa - TTM11E10 = 12 	!AM11Aa = DM11He + 12 + buffer (travelling time)
 
 
 !############
 !EXTRA CONSTRAINT TO MAKE SURE TWO TRAINS ARE DEPARTING 30 MIN FROM EACH OTHER
 
-DM10Le - DE10Le = 30
-DM11Aa - DE11Aa = 30
+!DM10Le - DE10Le = 30  !first E10 than M10
+!DM11Aa - DE11Aa = -30 !first M11 train in Aa than E11
 
 
 !############
@@ -226,15 +234,15 @@ IBK0C1 + UK0C1p + UK0C1n - BK0StLa = 0
 !CALCULATE THE TRANSFERCOST (TTCOST) STOPPINGCOST (STCOST) AND THE DEVIATION COST (DEVIAT) AND SO THE TOTALCOST
 !ALL THESE WEIGHTS USED NEED TO BE CALCULATED AGAIN FOR ALL OUR VARIABLES 
 
-0.845TTK11E10 + 0.349TTE10K11 + 0.024TTK11E21 + 0.024TTE10K20 + 0.030TTE11C20 + 0.107TTC11M20  
-+ 0.079TTM11C20 + 0.963TTC10K21 + 0.963TTK10C21 + 0.196TTE11M10 + 0.196TTM11E10
+0.845TTK11E10 + 0.349TTE10K11 + 0.024TTK11E21 + 0.024TTE10K20 + 0.030TTE11C20 + 0.107TTC11M10  
++ 0.079TTM11C20 + 0.963TTC10K11 + 0.963TTK10C21 + 0.196TTE11M10 + 0.196TTM11E10
 - TTCOST = 11.3292  ! not equal to zero bc min tt is 3 (11.3292 is filled in for the 3 minutes)
 
 6.51STC1Le + 0STC0La + 2.85STE1Aa + 4STE1Le + 2.85STE0Aa + 0STE0Ha + 1.19STK0Al 
 + 0.62STK0St + 0STK0La + 1.19STK1Al + 0.62STK1St + 1.26STK1Ha + 0.45STM0Aa 
 + 1.82STM0Le + 0.45STM1Aa + 0STM1He - STCOST = 0
 
-12.19UK1E0p + 1.54UK1E0n + 3UE0K1p + 3UE0K1n + 0.94UK1E1n + 1.30UK1E1p +  3UE0K0n + 3UE0K0p
+2.19UK1E0p + 1.54UK1E0n + 3UE0K1p + 3UE0K1n + 0.94UK1E1n + 1.30UK1E1p +  3UE0K0n + 3UE0K0p
 + 4.50UC1E0n + 1.68UC1E0p + 4.57UC1M0n + 2.59UC1M0p + 0.70UM1C0n + 1.05UM1C0p + 1.48UE1C0n + 1.00UE1C0p 
 + 0.38UE1C0n + 1.66UE1C0p + 2.27UE1M0n + 4.17UE1M0p + 0.67UC0K1n + 5.56UC0K1p + 0.70UK0C1n + 8.73UK0C1p 
 -DEVIAT = 0 
@@ -246,8 +254,8 @@ TTCOST + STCOST + DEVIAT - TOTCOST = 0
 !GUARANTEE PERIODICITY OF ALL THE DEPARTURES AND ARRIVALS
 
 !C20 
-!DC20Le-DC10Le=60
-!AC20La-AC10La=60
+DC20Le-DC10Le=60
+AC20La-AC10La=60
 
 !C30
 !DC30Le-DC20Le=60
@@ -255,7 +263,7 @@ TTCOST + STCOST + DEVIAT - TOTCOST = 0
 
 !C21
 DC21La-DC11La=60
-!AC21Le-AC11Le=60
+AC21Le-AC11Le=60
 
 !C31
 !DC31La-DC21La=60
@@ -263,8 +271,8 @@ DC21La-DC11La=60
 
 !E20 
 DE20Le-DE10Le=60
-!DE20Aa-DE10Aa=60
-!AE20Ha-AE10Ha=60
+DE20Aa-DE10Aa=60
+AE20Ha-AE10Ha=60
 
 !E30
 !DE30Le-DE20Le=60
@@ -272,7 +280,7 @@ DE20Le-DE10Le=60
 !AE30Ha-AE20Ha=60
 
 !E21
-!DE21Ha-DE11Ha=60
+DE21Ha-DE11Ha=60
 !DE21Aa-DE11Aa=60
 !AE21Le-AE11Le=60
 
@@ -307,8 +315,8 @@ AK21Ha-AK11Ha=60
 
 !M20 
 DM20Le-DM10Le=60
-!DM20Aa-DM10Aa=60
-!AM20He-AM10He=60
+DM20Aa-DM10Aa=60
+AM20He-AM10He=60
 
 !M30
 !DM30Le-DM20Le=60
@@ -316,15 +324,24 @@ DM20Le-DM10Le=60
 !AM30He-AM20He=60
 
 !M21
-!DM21He-DM11He=60
-!DM21Aa-DM11Aa=60
-!AM21Le-AM11Le=60
+DM21He-DM11He=60
+DM21Aa-DM11Aa=60
+AM21Le-AM11Le=60
 
 !M31
 !DM31He-DM21He=60
 !DM31Aa-DM21Aa=60 
 !AM31Le-AM21Le=60
 
+END
+
 !############
 !SPECIFY THE INTEGER VARIABLES (SO ALL VARIABLES OF THE TIME TABLES ARE INTEGERS)
 
+Gin STK1Al
+Gin STE1AA
+Gin STM1Aa
+Gin DK10Al
+Gin DE21Ha
+Gin AK11Ha
+Gin YAlSt
