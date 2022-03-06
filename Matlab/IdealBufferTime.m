@@ -1,5 +1,4 @@
-% !Hasselt
-% IBK1E0
+% !Hasselt IBK1E0
 Pt=4227;
 Pr=8422;
 Pa=14992;
@@ -45,7 +44,7 @@ idealBuffers.IBE0K0.pCoef = pCoef;
 Pt=0;
 Pr=43423;
 Pa=14474;
-p=30;
+p=60;
 lambda=1.62;
 [idealBufferRound, ~ , nCoef, pCoef] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,0);
 idealBuffers.IBC1E0.IdealBuffer = idealBufferRound;
@@ -55,7 +54,7 @@ idealBuffers.IBC1E0.pCoef = pCoef;
 Pt=533;
 Pr=43423;
 Pa=14474;
-p=30;
+p=60;
 lambda=1.62;
 [idealBufferRound, ~ , nCoef, pCoef] = calculateIdealBuffer(lambda,p,Pt,Pr,Pa,0);
 idealBuffers.IBC1M0.IdealBuffer = idealBufferRound;
