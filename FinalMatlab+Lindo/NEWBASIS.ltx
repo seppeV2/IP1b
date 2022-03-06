@@ -1,0 +1,337 @@
+min totcost
+
+s.t.
+
+!################
+!MINIMUM TRANSFER TIMES
+TTMIN = 3
+
+
+
+TTK11E10 - TTMIN > 0
+TTE10K11 - TTMIN > 5
+TTK11E21 - TTMIN > 0
+TTE10K20 - TTMIN > 0
+
+TTE11C20 - TTMIN > 0
+TTC11M10 - TTMIN > 2
+TTM11C20 - TTMIN > 0
+
+TTC10K11 - TTMIN > 0
+TTK10C21 - TTMIN > 0 
+
+TTE11M10 - TTMIN > 4
+TTM11E10 - TTMIN > 0
+
+
+!##################
+!IDEAL BUFFER TIMES
+!STILL TO CALCULATE!
+
+!Hasselt
+IBK1E0=4
+IBE0K1=7 !manually reduced (was 17)
+IBK1E1=2
+IBE0K0=7 !manually reduced (was 28)
+
+!Leuven
+IBC1E0=1
+IBC1M0=1
+IBM1C0=4
+IBE1C0=2
+
+!Aarschot
+IBM1E0=6
+IBE1M0=2
+
+!Landen
+IBC0K1=7
+IBK0C1=5
+
+
+
+!##############
+!DIFFERENT LINES          
+! note Arriving = Departure station before + travelling time between station + stopping time end station
+
+!C11 (Landen to Leuven [Brussels](tranfer possibility in Leuven))
+DC11La < 60
+DC11La + BC1LaLe - AC11Le = -27 	!IRCLaLe = 27 ideal running times, IR train
+STC1Le > 1				!stopping time because through
+
+!C10 (Leuven Landen)
+DC10Le < 60
+DC10Le + BC0LeLa - AC10La = -27
+STC0La > 1				!stopping time because reused
+
+!E11 (Hasselt Leuven [Genk Brussel] (transfer possibility in Aarschot and Leuven))
+DE11Ha<60
+DE11Ha+STE1Aa +BE1HaAa -DE11Aa=-25	!ICEAaHa= 25
+DE11Aa+BE1AaLe -AE11Le=-12		!ICELeAa= 12; ideal running times, IC train
+STE1Aa >1
+STE1Le > 1 				!stopping time because through 
+
+!E10 (Leuven Hasselt)
+DE10Le<60
+DE10Le+STE0Aa + BE0LeAa -DE10Aa= -12	!ICELeAa= 12; ideal running times, IC train
+DE10Aa+ BE0AaHa - AE10Ha=-25		!ICEAaHa= 25
+STE0Aa > 1 
+STE0Ha > 1				!stopping time because through
+
+
+!K10 (Hasselt Landen [Liège Landen] (transfer in Landen))
+DK10Ha<60
+DK10Ha+STK0Al -DK10Al=-6		!ICKHaAl=6
+DK10Al+STK0St -DK10St=-8		!ICKAlSt=8
+DK10St +BK0StLa -AK10La=-9 		!ICKStLa=9
+STK0Al>1
+STK0St>1
+STK0La > 1				!stopping time because train reused
+
+
+!K11 (Landen Hasselt)
+DK11La<60
+DK11La+STK1St -DK11St=-9
+DK11St+STK1Al -DK11Al=-8
+DK11Al+BK1AlHa -AK11Ha=-6
+STK1Al>1
+STK1St>1
+STK1Ha > 1				!stopping time because through
+
+!M10 (Leuven Heist[Brussel Heist] (transfer in Aarschot)
+DM10Le<60
+DM10Le+STM0Aa -DM10Aa=-14		!LMLeAa=14; ideal running times, L train
+DM10Aa-AM10He=-12			!LMAaHe=12
+STM0Aa>1
+STM0Le>1				!stopping time because through
+
+!M11 (Heist Leuven)
+DM11He=31
+DM11He + STM1Aa + BM1HeAa -DM11Aa=-12
+DM11Aa+BM1AaLe -AM11Le=-14
+STM1Aa>1
+STM1He>1				!stopping time becasue through
+
+!#############
+!EQUAL TRAINS
+
+!C train in Landen
+AC10La + STC0La - DC21La < 0 		!C10 is the same train as the C21 train
+
+!K train in Landen
+AK10La + STK0La - DK21La < 0 		!K10 same train as the K12
+
+
+
+!#############
+!TRANSFERS
+!Choice of first or second train done by the rule of papers
+
+!HASSELT
+!K1E0
+-AK11Ha + STE0Ha + AE10Ha - TTK11E10 = 0 !Both feasible when the two trains arrive at the same time
+
+!E0K1
+-AE10Ha + STK1Ha + AK11Ha - TTE10K11 = 0 !And the Stopping time is equal to both (equal) tranferring times
+
+!K1E1
+-AK11Ha + DE21Ha - TTK11E21 = 0
+
+!E0K0
+-AE10Ha + DK20Ha - TTE10K20 = 0
+
+!LEUVEN
+!E1C0
+-AE11Le + DC20Le - TTE11C20 = 0
+
+!C1M0
+-AC11Le + DM10Le - TTC11M10 = 0 		!not following the rule but I want to try this 
+
+!M1C0
+-AM11Le + DC20Le - TTM11C20 = 0 		!this could mean E11 and M11 arrives at the same time (not ideal)
+
+!C1E0
+!Try to exclude this transfer 
+
+!LANDEN
+!C0K1
+-AC10La + DK11La - TTC10K11 = 0		! not following the rules
+
+!K0C1
+-AK10La + DC21La - TTK10C21 = 0
+
+!AARSCHOT
+!E1M0
+-DE11Ha -BE1HaAa + DM10Aa - TTE11M10 = 25	!AE11Aa = DE11Ha + 25 + buffer (travelling time)
+
+
+!M1E0
+-DM11He  -BM1HeAa + DE10Aa - TTM11E10 = 12 	!AM11Aa = DM11He + 12 + buffer (travelling time)
+
+
+!############
+!SINGLE TRACK SEPCIFICATION (COPIED FROM OLD LINDO FILE)
+!Track K (trains K10 K11 K20 K21 K30 K31)
+!Sequence 10-11-20-21-30-31 OR 11-10-21-20-31-30
+!St-Al
+
+DK10Al -DK11St-120YAlSt<-8		!ICKAlSt=8
+DK11St -DK20Al-120YAlSt<-8
+!OR
+DK11St-DK10Al+120YAlSt<112 		!-8+120
+DK10Al-DK21St+120YAlSt<112
+
+
+!St-La
+DK10St -DK11La-120YStLa<-9		!ICKStLa=9
+DK11La -DK20St-120YStLa<-9
+!OR
+DK11La -DK10St+120YStLa<111
+DK10St - DK21La+120YStLa<111
+
+YAlSt<1
+YAlSt-YStLa=0					!same order over the whole single track
+
+
+
+
+!############
+!BUFFER/IDEAL BUFFER COMPARISON
+
+
+!Hasselt
+IBK1E0 + UK1E0p - UK1E0n - BK1AlHa = 0
+IBE0K1 + UE0K1p - UE0K1n - BE0AaHa = 0
+IBK1E1 + UK1E1p - UK1E1n - BK1AlHa = 0
+IBE0K0 + UE0K0p - UE0K0n - BE0AaHa = 0
+
+!Leuven
+IBC1E0 + UC1E0p - UC1E0n - BC1LaLe = 0
+IBC1M0 + UC1M0p - UC1M0n - BC1LaLe = 0
+IBM1C0 + UM1C0p - UM1C0n - BM1AaLe = 0
+IBE1C0 + UE1C0p - UE1C0n - BE1AaLe = 0
+
+!Aarschot
+IBM1E0 + UE1C0p - UM1E0n - BM1HeAa = 0
+IBE1M0 + UE1M0p - UE1M0n - BE1HaAa = 0
+
+!Landen
+IBC0K1 + UC0K1p - UC0K1n - BC0LeLa = 0
+IBK0C1 + UK0C1p - UK0C1n - BK0StLa = 0
+
+
+!############
+!CALCULATE THE TRANSFERCOST (TTCOST) STOPPINGCOST (STCOST) AND THE DEVIATION COST (DEVIAT) AND SO THE TOTALCOST
+!ALL THESE WEIGHTS USED NEED TO BE CALCULATED AGAIN FOR ALL OUR VARIABLES 
+
+0.845TTK11E10 + 0.349TTE10K11 + 0.024TTK11E21 + 0.024TTE10K20 + 0.030TTE11C20 + 0.107TTC11M10  
++ 0.079TTM11C20 + 0.963TTC10K11 + 0.963TTK10C21 + 0.196TTE11M10 + 0.196TTM11E10
+- TTCOST = 11.3292  ! not equal to zero bc min tt is 3 (11.3292 is filled in for the 3 minutes)
+
+6.51STC1Le + 0STC0La + 2.85STE1Aa + 4STE1Le + 2.85STE0Aa + 0STE0Ha + 1.19STK0Al 
++ 0.62STK0St + 0STK0La + 1.19STK1Al + 0.62STK1St + 1.26STK1Ha + 0.45STM0Aa 
++ 1.82STM0Le + 0.45STM1Aa + 0STM1He - STCOST = 0
+
+2.19UK1E0p + 1.54UK1E0n + 3UE0K1p + 3UE0K1n + 0.94UK1E1n + 1.30UK1E1p +  3UE0K0n + 3UE0K0p
++ 4.50UC1E0n + 1.68UC1E0p + 4.57UC1M0n + 3.46UC1M0p + 0.70UM1C0n + 1.05UM1C0p + 1.48UE1C0n + 1.00UE1C0p 
++ 0.38UE1C0n + 1.66UE1C0p + 2.27UE1M0n + 4.17UE1M0p + 0.67UC0K1n + 5.56UC0K1p + 0.70UK0C1n + 8.73UK0C1p 
+-DEVIAT = 0 
+
+TTCOST + STCOST + DEVIAT - TOTCOST = 0
+
+
+!############
+!GUARANTEE PERIODICITY OF ALL THE DEPARTURES AND ARRIVALS
+
+!C20 
+DC20Le-DC10Le=60
+AC20La-AC10La=60
+
+!C30
+!DC30Le-DC20Le=60
+!AC30La-AC20La=60
+
+!C21
+DC21La-DC11La=60
+AC21Le-AC11Le=60
+
+!C31
+!DC31La-DC21La=60
+!AC31Le-AC21Le=60
+
+!E20 
+DE20Le-DE10Le=60
+DE20Aa-DE10Aa=60
+AE20Ha-AE10Ha=60
+
+!E30
+!DE30Le-DE20Le=60
+!DE30Aa-DE20Aa=60
+!AE30Ha-AE20Ha=60
+
+!E21
+DE21Ha-DE11Ha=60
+!DE21Aa-DE11Aa=60
+!AE21Le-AE11Le=60
+
+!E31
+!DE31Ha-DE21Ha=60
+!DE31Aa-DE21Aa=60
+!AE31Le-AE21Le=60
+
+!K20
+DK20Ha-DK10Ha=60
+DK20Al-DK10Al=60
+DK20St-DK10St=60
+AK20La-AK10La=60
+
+!K30
+!DK30Ha-DK20Ha=60
+!DK30Al-DK20Al=60
+!DK30St-DK20St=60
+!AK30La-AK20La=60
+
+!K21
+DK21La-DK11La=60
+DK21St-DK11St=60
+DK21Al-DK11Al=60
+AK21Ha-AK11Ha=60
+
+!K31
+!DK31La-DK21La=60
+!DK31St-DK21St=60
+!DK31Al-DK21Al=60
+!AK31Ha-AK21Ha=60
+
+!M20 
+DM20Le-DM10Le=60
+DM20Aa-DM10Aa=60
+AM20He-AM10He=60
+
+!M30
+!DM30Le-DM20Le=60
+!DM30Aa-DM20Aa=60
+!AM30He-AM20He=60
+
+!M21
+DM21He-DM11He=60
+DM21Aa-DM11Aa=60
+AM21Le-AM11Le=60
+
+!M31
+!DM31He-DM21He=60
+!DM31Aa-DM21Aa=60 
+!AM31Le-AM21Le=60
+
+END
+
+!############
+!SPECIFY THE INTEGER VARIABLES (SO ALL VARIABLES OF THE TIME TABLES ARE INTEGERS)
+
+Gin STK1Al
+Gin STE1AA
+Gin STM1Aa
+Gin DK10Al
+Gin DE21Ha
+Gin AK11Ha
+Gin YAlSt
