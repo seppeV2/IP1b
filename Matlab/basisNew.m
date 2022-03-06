@@ -112,7 +112,9 @@ TM11E10= 980;
 TK11E10= 4227;
 TE10K11= 1745;
 TM11C20= 394;
-TC11M10= 533;
+TC11M10He= 245;
+TC11M10Aa = 298;
+TC11M10 = TC11M10He + TC11M10Aa;
 TE11C20= 149;
 TC11E20= 0;
 
@@ -284,7 +286,7 @@ ELeAaav=1.30;
 EAaHaav=3.7;
 
 %number of simulation runs
-a=500000;
+a=50000;
 %passengers_arriving_late: passengers arriving late more minutes than "too_late"
 %cost_arriving_late is the cost associated with arriving late
 %delay contains the minutes of delay
@@ -309,6 +311,32 @@ missedC11M10 = 0;
 missedE11C20 = 0;
 missedC11E20 = 0;
 
+costMissK10C21 = 0;
+costMissC10K11 = 0;
+costMissE10K20 = 0;
+costMissK11E21 = 0;
+costMissE11M10 = 0;
+costMissM11E10 = 0;
+costMissK11E10 = 0;
+costMissE10K11 = 0;
+costMissM11C20 = 0;
+costMissC11M10 = 0;
+costMissE11C20 = 0;
+costMissC11E20 = 0;
+
+costWaitK10C21 = 0;
+costWaitC10K11 = 0;
+costWaitE10K20 = 0;
+costWaitK11E21 = 0;
+costWaitE11M10 = 0;
+costWaitM11E10 = 0;
+costWaitK11E10 = 0;
+costWaitE10K11 = 0;
+costWaitM11C20 = 0;
+costWaitC11M10 = 0;
+costWaitE11C20 = 0;
+costWaitC11E20 = 0;
+
 TCC10LA=0;
 TCC11LE=0;
 TCE10HA=0;
@@ -321,6 +349,7 @@ TCM11LE=0;
 TCM11AA=0;
 TCM10AA=0;
 
+x=[];
 
 for i=1:1:a
     %determine the real arriving times
@@ -544,22 +573,22 @@ for i=1:1:a
         TCM10AA=TCM10AA + pzm10aa;
     end
     
-%     %M10He
-%     if am10he>AM10He								%we have a delay
-%         mm10he=(am10he-AM10He);					%minutes of delay
-%         pm10he=mm10he*ARM10He*WLA;					%cost of this delay
-%         pzm10he=0;
-%         if am10he-AM10He>too_late
-%             um10he= ARM10He;	%number of passengers arriving late due to this delay
-%         else
-%             um10he=0;
-%         end
-%     else
-%         um10he=0;
-%         mm10he=0;
-%         pm10he=0;
-%         pzm10he=(AM10He-am10he)*THM10He*WST;
-%     end
+    %     %M10He
+    %     if am10he>AM10He								%we have a delay
+    %         mm10he=(am10he-AM10He);					%minutes of delay
+    %         pm10he=mm10he*ARM10He*WLA;					%cost of this delay
+    %         pzm10he=0;
+    %         if am10he-AM10He>too_late
+    %             um10he= ARM10He;	%number of passengers arriving late due to this delay
+    %         else
+    %             um10he=0;
+    %         end
+    %     else
+    %         um10he=0;
+    %         mm10he=0;
+    %         pm10he=0;
+    %         pzm10he=(AM10He-am10he)*THM10He*WST;
+    %     end
     
     
     
@@ -584,10 +613,12 @@ for i=1:1:a
     if ak10la + TT> DC21La
         missedK10C21 = missedK10C21 + 1;
         cmk10c21 = (DC31La-ak10la-TT)*TK10C21*WMT;
+        costMissK10C21 =  costMissK10C21+cmk10c21;
         pmk10c21 = TK10C21;
         plk10c21 = TK10C21;
     else
         cmk10c21 = (DC21La-ak10la-TT)*TK10C21*WEA;
+        costWaitK10C21 =  costWaitK10C21+cmk10c21;
         pmk10c21 = 0;
         if ak10la+TT+WA<DC21La
             plk10c21 = TK10C21;
@@ -599,11 +630,14 @@ for i=1:1:a
     %C10K11
     if ac10la + TT> DK11La
         missedC10K11 = missedC10K11 + 1;
-        cmc10k11 = (DK31La-ac10la-TT)*TC10K11*WMT;
+        cmc10k11 = (DK21La-ac10la-TT)*TC10K11*WMT;
+        costMissC10K11 =  costMissC10K11+cmc10k11;
         pmc10k11 = TC10K11;
         plc10k11 = TC10K11;
     else
         cmc10k11 = (DK11La-ac10la-TT)*TC10K11*WEA;
+        %x = [x; [DK11La-TT ac10la]];
+        costWaitC10K11 =  costWaitC10K11+cmc10k11;
         pmc10k11 = 0;
         if ac10la+TT+WA<DK11La
             plc10k11 = TC10K11;
@@ -616,10 +650,12 @@ for i=1:1:a
     if ae10ha + TT> DK20Ha
         missedE10K20 = missedE10K20 +1;
         cme10k20 = (DK30Ha-ae10ha-TT)*TE10K20*WMT;
+        costMissE10K20 =  costMissE10K20+cme10k20;
         pme10k20 = TE10K20;
         ple10k20 = TE10K20;
     else
         cme10k20 = (DK20Ha-ae10ha-TT)*TE10K20*WEA;
+        costWaitE10K20 =  costWaitE10K20+cme10k20;
         pme10k20 = 0;
         if ae10ha+TT+WA<DK20Ha
             ple10k20 = TE10K20;
@@ -632,10 +668,12 @@ for i=1:1:a
     if ak11ha + TT> DE21Ha
         missedK11E21 = missedK11E21 + 1;
         cmk11e21 = (DE31Ha-ak11ha-TT)*TK11E21*WMT;
+        costMissK11E21 =  costMissK11E21+cmk11e21;
         pmk11e21 = TK11E21;
         plk11e21 = TK11E21;
     else
         cmk11e21 = (DE21Ha-ak11ha-TT)*TK11E21*WEA;
+        costWaitK11E21 =  costWaitK11E21+cmk11e21;
         pmk11e21 = 0;
         if ak11ha+TT+WA<DE21Ha
             plk11e21 = TK11E21;
@@ -648,10 +686,12 @@ for i=1:1:a
     if ae11aa + TT> DM10Aa
         missedE11M10 = missedE11M10 + 1;
         cme11m10 = (DM20Aa-ae11aa-TT)*TE11M10*WMT;
+        costMissE11M10 =  costMissE11M10+cme11m10;
         pme11m10 = TE11M10;
         ple11m10 = TE11M10;
     else
         cme11m10 = (DM10Aa-ae11aa-TT)*TE11M10*WEA;
+        costWaitE11M10 =  costWaitE11M10+cme11m10;
         pme11m10 = 0;
         if ae11aa+TT+WA<DM10Aa
             ple11m10 = TE11M10;
@@ -663,10 +703,12 @@ for i=1:1:a
     if am11aa + TT> DE10Aa
         missedM11E10 = missedM11E10 +1;
         cmm11e10 = (DE20Aa-am11aa-TT)*TM11E10*WMT;
+        costMissM11E10 =  costMissM11E10+cmm11e10;
         pmm11e10 = TM11E10;
         plm11e10 = TM11E10;
     else
         cmm11e10 = (DE10Aa-am11aa-TT)*TM11E10*WEA;
+        costWaitM11E10 =  costWaitM11E10+cmm11e10;
         pmm11e10 = 0;
         if am11aa+TT+WA<DE10Aa
             plm11e10 = TM11E10;
@@ -679,10 +721,12 @@ for i=1:1:a
     if ak11ha + TT> DE10Ha
         missedK11E10 = missedK11E10 +1;
         cmk11e10 = (DE20Ha-ak11ha-TT)*TK11E10*WMT;
+        costMissK11E10 =  costMissK11E10+cmk11e10;
         pmk11e10 = TK11E10;
         plk11e10 = TK11E10;
     else
         cmk11e10 = (DE10Ha-ak11ha-TT)*TK11E10*WEA;
+        costWaitK11E10 =  costWaitK11E10+cmk11e10;
         pmk11e10 = 0;
         if ak11ha+TT+WA<DE10Ha
             plk11e10 = TK11E10;
@@ -695,10 +739,12 @@ for i=1:1:a
     if ae10ha + TT> DK11Ha
         missedE10K11 = missedE10K11 +1;
         cme10k11 = (DK21Ha-ae10ha-TT)*TE10K11*WMT;
+        costMissE10K11 =  costMissE10K11+cme10k11;
         pme10k11 = TE10K11;
         ple10k11 = TE10K11;
     else
         cme10k11 = (DK11Ha-ae10ha-TT)*TE10K11*WEA;
+        costWaitE10K11 =  costWaitE10K11+cme10k11;
         pme10k11 = 0;
         if ae10ha+TT+WA<DK11Ha
             ple10k11 = TE10K11;
@@ -711,10 +757,12 @@ for i=1:1:a
     if am11le + TT> DC20Le
         missedM11C20 = missedM11C20 +1;
         cmm11c20 = (DC30Le-am11le-TT)*TM11C20*WMT;
+        costMissM11C20 =  costMissM11C20+cmm11c20;
         pmm11c20 = TM11C20;
         plm11c20 = TM11C20;
     else
         cmm11c20 = (DC20Le-am11le-TT)*TM11C20*WEA;
+        costWaitM11C20 =  costWaitM11C20+cmm11c20;
         pmm11c20 = 0;
         if am11le+TT+WA<DC20Le
             plm11c20 = TM11C20;
@@ -727,10 +775,13 @@ for i=1:1:a
     if ae11le + TT> DC20Le
         missedE11C20 = missedE11C20 + 1;
         cme11c20 = (DC30Le-ae11le-TT)*TE11C20*WMT;
+        costMissE11C20 =  costMissE11C20+cme11c20;
+        
         pme11c20 = TE11C20;
         ple11c20 = TE11C20;
     else
         cme11c20 = (DC20Le-ae11le-TT)*TE11C20*WEA;
+        costWaitE11C20 =  costWaitE11C20+cme11c20;
         pme11c20 = 0;
         if ae11le+TT+WA<DC20Le
             ple11c20 = TE11C20;
@@ -742,11 +793,16 @@ for i=1:1:a
     %C11M10	Landen	Aarschot
     if ac11le + TT> DM10Le
         missedC11M10 = missedC11M10 +1;
-        cmc11m10 = (DM30Le-ac11le-TT)*TC11M10*WMT;
+        %if you go to Aarschot there is a second option 
+        %when you miss your train
+        cmc11m10 = ((DM20Le-ac11le-TT)*TC11M10He +...
+            (DE20Le-ac11le-TT)*TC11M10Aa) *WMT;
         pmc11m10 = TC11M10;
         plc11m10 = TC11M10;
+        costMissC11M10 =  costMissC11M10+cmc11m10;
     else
         cmc11m10 = (DM10Le-ac11le-TT)*TC11M10*WEA;
+        costWaitC11M10 =  costWaitC11M10+cmc11m10;
         pmc11m10 = 0;
         if ac11le+TT+WA<DM10Le
             plc11m10 = TC11M10;
@@ -754,7 +810,6 @@ for i=1:1:a
             plc11m10 = 0;
         end
     end
-    
     
     
     
@@ -860,9 +915,47 @@ if plot
         'M11LE'
         'M11AA'
         'M10AA'};
-     bar(barplot3);
+    bar(barplot3);
     set(gca,'xticklabel',names2);
     title('Through Costs Per Train');
+    
+    figure
+    barplot4 = (1/a)*[costMissK10C21
+        costMissC10K11
+        costMissE10K20
+        costMissK11E21
+        costMissE11M10
+        costMissM11E10
+        costMissK11E10
+        costMissE10K11
+        costMissM11C20
+        costMissC11M10
+        costMissE11C20
+        costMissC11E20 ];
+    
+    bar(barplot4);
+    set(gca,'xticklabel',names);
+    title('cost per missed transfer');
+    
+        figure
+    barplot5 = (1/a)*[costWaitK10C21
+        costWaitC10K11
+        costWaitE10K20
+        costWaitK11E21
+        costWaitE11M10
+        costWaitM11E10
+        costWaitK11E10
+        costWaitE10K11
+        costWaitM11C20
+        costWaitC11M10
+        costWaitE11C20
+        costWaitC11E20 ];
+    
+    bar(barplot5);
+    set(gca,'xticklabel',names);
+    title('cost per not missed transfer');
+    
+    
     
 end
 end

@@ -18,12 +18,10 @@ TTC11M10 - TTMIN > 2
 TTM11C20 - TTMIN > 0
 
 TTC10K11 - TTMIN > 0
-TTK10C21 - TTMIN > 3
+TTK10C21 - TTMIN > 0 
 
 TTE11M10 - TTMIN > 4
 TTM11E10 - TTMIN > 0
-
-
 
 
 !##################
@@ -49,7 +47,6 @@ IBE1M0=2
 !Landen
 IBC0K1=7
 IBK0C1=5
-
 
 
 
@@ -86,7 +83,7 @@ STE0Ha > 1				!stopping time because through
 DK10Ha<60
 DK10Ha+STK0Al -DK10Al=-6		!ICKHaAl=6
 DK10Al+STK0St -DK10St=-8		!ICKAlSt=8
-DK10St +BK0StLa -AK0La=-9 		!ICKStLa=9
+DK10St +BK0StLa -AK10La=-9 		!ICKStLa=9
 STK0Al>1
 STK0St>1
 STK0La > 1				!stopping time because train reused
@@ -103,14 +100,14 @@ STK1Ha > 4				!stopping time because through
 
 !M10 (Leuven Heist[Brussel Heist] (transfer in Aarschot)
 DM10Le<60
-DM10Le+STM0Aa + BM0LeAa -DM10Aa=-14	!LMLeAa=14; ideal running times, L train
+DM10Le+STM0Aa -DM10Aa=-14		!LMLeAa=14; ideal running times, L train
 DM10Aa-AM10He=-12			!LMAaHe=12
 STM0Aa>1
 STM0Le>1				!stopping time because through
 
 !M11 (Heist Leuven)
-DM11He<60
-DM11He+STM1Aa + BM1HeAa -DM11Aa=-12
+DM11He=31
+DM11He + STM1Aa + BM1HeAa -DM11Aa=-12
 DM11Aa+BM1AaLe -AM11Le=-14
 STM1Aa>1
 STM1He>1				!stopping time becasue through
@@ -132,10 +129,10 @@ AK10La + STK0La - DK21La < 0 		!K10 same train as the K12
 
 !HASSELT
 !K1E0
-AK11Ha + STK1Ha - AE10Ha - TTK11E10 = 0 !Both feasible when the two trains arrive at the same time
+-AK11Ha + STK0Ha + AE10Ha - TTK11E10 = 0 !Both feasible when the two trains arrive at the same time
 
 !E0K1
-AE10Ha + STE0Ha - AK11Ha - TTE10K11 = 0 !And the Stopping time is equal to both (equal) tranferring times
+-AE10Ha + STE1Ha + AK11Ha - TTE10K11 = 0 !And the Stopping time is equal to both (equal) tranferring times
 
 !K1E1
 -AK11Ha + DE21Ha - TTK11E21 = 0
@@ -210,24 +207,24 @@ YAlSt-YStLa=0					!same order over the whole single track
 
 
 !Hasselt
-IBK1E0 + UK1E0p + UK1E0n - BK1AlHa = 0
-IBE0K1 + UE0K1p + UE0K1n - BE0AaHa = 0
-IBK1E1 + UK1E1p + UK1E1n - BK1AlHa = 0
-IBE0K0 + UE0K0p + UE0K0n - BE0AaHa = 0
+IBK1E0 + UK1E0p - UK1E0n - BK1AlHa = 0
+IBE0K1 + UE0K1p - UE0K1n - BE0AaHa = 0
+IBK1E1 + UK1E1p - UK1E1n - BK1AlHa = 0
+IBE0K0 + UE0K0p - UE0K0n - BE0AaHa = 0
 
 !Leuven
-IBC1E0 + UC1E0p + UC1E0n - BC1LaLe = 0
-IBC1M0 + UC1M0p + UC1M0n - BC1LaLe = 0
-IBM1C0 + UM1C0p + UM1C0n - BM1AaLe = 0
-IBE1C0 + UE1C0p + UE1C0n - BE1AaLe = 0
+IBC1E0 + UC1E0p - UC1E0n - BC1LaLe = 0
+IBC1M0 + UC1M0p - UC1M0n - BC1LaLe = 0
+IBM1C0 + UM1C0p - UM1C0n - BM1AaLe = 0
+IBE1C0 + UE1C0p - UE1C0n - BE1AaLe = 0
 
 !Aarschot
-IBM1E0 + UE1C0p + UM1E0n - BM1HeAa = 0
-IBE1M0 + UE1M0p + UE1M0n - BE1HaAa = 0
+IBM1E0 + UE1C0p - UM1E0n - BM1HeAa = 0
+IBE1M0 + UE1M0p - UE1M0n - BE1HaAa = 0
 
 !Landen
-IBC0K1 + UC0K1p + UC0K1n - BC0LeLa = 0
-IBK0C1 + UK0C1p + UK0C1n - BK0StLa = 0
+IBC0K1 + UC0K1p - UC0K1n - BC0LeLa = 0
+IBK0C1 + UK0C1p - UK0C1n - BK0StLa = 0
 
 
 !############
